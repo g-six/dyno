@@ -11,7 +11,7 @@ export interface ReplaceResult {
  * @param payload - The JSON object to process
  * @param targetValue - The value to replace
  * @param replacementValue - The value to replace with
- * @param maxReplacements - Maximum number of replacements to make (default: Infinity for unlimited)
+ * @param maxReplacements - Maximum number of replacements to make (default: 3)
  * @returns An object containing the modified result and the count of replacements made
  */
 /**
@@ -27,7 +27,7 @@ export function replaceInJson(
   payload: any,
   targetValue: any,
   replacementValue: any,
-  maxReplacements: number = Infinity
+  maxReplacements: number = 3
 ): ReplaceResult {
   // Fast path: if maxReplacements is 0, return immediately
   if (maxReplacements <= 0) {
