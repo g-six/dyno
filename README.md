@@ -56,7 +56,7 @@ Recursively replaces occurrences of a specified value in a JSON object up to a m
 | `payload` | `any` | - | The JSON object to process |
 | `targetValue` | `any` | - | The value to replace |
 | `replacementValue` | `any` | - | The value to replace with |
-| `maxReplacements` | `number` | `Infinity` | Maximum number of replacements to make |
+| `maxReplacements` | `number` | 3 | Maximum number of replacements to make |
 
 #### Returns
 
@@ -68,52 +68,52 @@ Returns the modified object directly (type: `any`).
 
 ```typescript
 const data = {
-  status: 'active',
-  user: { status: 'active' },
-  isActive: true
+  animal: 'dog',
+  pet: { type: 'dog' },
+  favorite: 'dog'
 };
 
-const result = replaceInJson(data, 'active', 'enabled');
-// Result: { status: 'enabled', user: { status: 'enabled' }, isActive: true }
+const result = replaceInJson(data, 'dog', 'cat');
+// Result: { animal: 'cat', pet: { type: 'cat' }, favorite: 'cat' }
 ```
 
 ### Array Replacement
 
 ```typescript
-const animals = ['dog', 'cat', 'dog', 'bird'];
+const animals = ['dog', 'bird', 'dog', 'fish'];
 
-const result = replaceInJson(animals, 'dog', 'wolf');
-// Result: ['wolf', 'cat', 'wolf', 'bird']
+const result = replaceInJson(animals, 'dog', 'cat');
+// Result: ['cat', 'bird', 'cat', 'fish']
 ```
 
 ### Nested Structures
 
 ```typescript
 const complexData = {
-  users: [
-    { name: 'John', status: 'active' },
-    { name: 'Jane', status: 'active' }
+  pets: [
+    { name: 'Rex', type: 'dog' },
+    { name: 'Buddy', type: 'dog' }
   ],
-  defaultStatus: 'active'
+  favorite: 'dog'
 };
 
-const result = replaceInJson(complexData, 'active', 'enabled');
-// All 'active' values replaced with 'enabled'
+const result = replaceInJson(complexData, 'dog', 'cat');
+// All 'dog' values replaced with 'cat'
 ```
 
 ### Limited Replacements
 
 ```typescript
 const data = {
-  first: 'replace',
-  second: 'replace',
-  third: 'replace',
-  fourth: 'keep'
+  first: 'dog',
+  second: 'dog',
+  third: 'dog',
+  fourth: 'bird'
 };
 
 // Replace only first 2 occurrences
-const result = replaceInJson(data, 'replace', 'changed', 2);
-// Result: { first: 'changed', second: 'changed', third: 'replace', fourth: 'keep' }
+const result = replaceInJson(data, 'dog', 'cat', 2);
+// Result: { first: 'cat', second: 'cat', third: 'dog', fourth: 'bird' }
 ```
 
 ### Different Data Types
@@ -143,20 +143,20 @@ When the replacement limit is reached, the function stops processing and leaves 
 
 ```typescript
 const largeData = {
-  section1: { status: 'old', type: 'old' },
-  section2: { status: 'old', type: 'old' },
-  section3: { status: 'old', type: 'old' }
+  section1: { animal: 'dog', pet: 'dog' },
+  section2: { animal: 'dog', pet: 'dog' },
+  section3: { animal: 'dog', pet: 'dog' }
 };
 
-const result = replaceInJson(largeData, 'old', 'new', 3);
+const result = replaceInJson(largeData, 'dog', 'cat', 3);
 // Only first 3 occurrences are replaced
 ```
 
 ### Zero Replacements
 
 ```typescript
-const data = { keep: 'original', values: 'unchanged' };
-const result = replaceInJson(data, 'target', 'replacement', 0);
+const data = { animal: 'bird', pet: 'fish' };
+const result = replaceInJson(data, 'dog', 'cat', 0);
 // Result: same as input (but new object reference)
 ```
 
@@ -165,10 +165,10 @@ const result = replaceInJson(data, 'target', 'replacement', 0);
 ### Empty Structures
 
 ```typescript
-replaceInJson({}, 'any', 'value');        // Returns: {}
-replaceInJson([], 'any', 'value');        // Returns: []
-replaceInJson(null, 'any', 'value');      // Returns: null
-replaceInJson(undefined, 'any', 'value'); // Returns: undefined
+replaceInJson({}, 'dog', 'cat');        // Returns: {}
+replaceInJson([], 'dog', 'cat');        // Returns: []
+replaceInJson(null, 'dog', 'cat');      // Returns: null
+replaceInJson(undefined, 'dog', 'cat'); // Returns: undefined
 ```
 
 ### Immutability
@@ -176,11 +176,11 @@ replaceInJson(undefined, 'any', 'value'); // Returns: undefined
 The original object is never modified:
 
 ```typescript
-const original = { value: 'change-me', keep: 'unchanged' };
-const result = replaceInJson(original, 'change-me', 'changed');
+const original = { animal: 'dog', pet: 'bird' };
+const result = replaceInJson(original, 'dog', 'cat');
 
-console.log(original); // { value: 'change-me', keep: 'unchanged' } - unchanged
-console.log(result);   // { value: 'changed', keep: 'unchanged' } - new object
+console.log(original); // { animal: 'dog', pet: 'bird' } - unchanged
+console.log(result);   // { animal: 'cat', pet: 'bird' } - new object
 console.log(original === result); // false
 ```
 
