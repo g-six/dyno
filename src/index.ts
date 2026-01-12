@@ -13,7 +13,7 @@ interface ReplaceRequest {
 
 server.post<{ Body: ReplaceRequest }>('/replace', async (request, reply) => {
   try {
-    const { payload, targetValue, replacementValue, maxReplacements } = request.body;
+    const { maxReplacements, ...payload } = request.body;
 
     // Validate required fields
     if (payload === undefined) {
@@ -23,35 +23,16 @@ server.post<{ Body: ReplaceRequest }>('/replace', async (request, reply) => {
       });
     }
 
-    if (targetValue === undefined) {
-      return reply.status(400).send({
-        error: 'Bad Request',
-        message: 'targetValue is required'
-      });
-    }
-
-    if (replacementValue === undefined) {
-      return reply.status(400).send({
-        error: 'Bad Request',
-        message: 'replacementValue is required'
-      });
-    }
-
     // Perform the replacement
-    const result: ReplaceResult = replaceInJson(
+    const { result }: ReplaceResult = replaceInJson(
       payload,
-      targetValue,
-      replacementValue,
+      'dog',
+      'cat',
       maxReplacements
     );
 
     // Return the result
-    return reply.send({
-      success: true,
-      data: result.result,
-      replacementCount: result.replacementCount,
-      originalPayload: payload
-    });
+    return reply.send(result);
 
   } catch (error) {
     server.log.error(error);
